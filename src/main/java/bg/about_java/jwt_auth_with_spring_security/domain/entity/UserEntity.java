@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @Setter
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     @Column(nullable = false, unique = true, length = 70)
     private String username;
@@ -23,10 +23,14 @@ public class User extends BaseEntity {
     private String email;
 
     @ManyToMany
-    @JoinTable(inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private Set<Role> roles;
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<RoleEntity> roles;
 
-    public User() {
+    public UserEntity() {
         this.roles = new HashSet<>();
     }
 }
