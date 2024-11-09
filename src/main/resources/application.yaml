@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    username: ${db_username}
+    password: ${db_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/jwt_auth_db?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+  application:
+    name: jwt-auth-with-spring-security
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    hibernate:
+      ddl-auto: update
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  sql:
+    init:
+      mode: never
