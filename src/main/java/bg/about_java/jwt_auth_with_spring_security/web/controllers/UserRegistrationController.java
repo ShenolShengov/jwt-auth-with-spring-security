@@ -18,6 +18,7 @@ public class UserRegistrationController {
         if (bindingResult.hasErrors()) {
 
         }
+
         return null;
     }
 }
