@@ -11,11 +11,6 @@ public class UniqueUsernameEmail implements ConstraintValidator<UniqueEmail, Str
     private final UserRepository userRepository;
 
     @Override
-    public void initialize(UniqueEmail constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
-    }
-
-    @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         if (email == null) return true;
         return userRepository.findByEmail(email).isEmpty();
