@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UserRegistrationException extends RuntimeException {
+public class UserAuthException extends RuntimeException {
 
     private final String[] errors;
 
-    public UserRegistrationException(String message, String... errors) {
+    public UserAuthException(String message, String... errors) {
         super(message);
         this.errors = errors;
     }
