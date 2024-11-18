@@ -1,6 +1,7 @@
 package bg.about_java.jwt_auth_with_spring_security.config;
 
 import bg.about_java.jwt_auth_with_spring_security.service.JwtService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
             continuesFilters(request, response, filterChain);
             return;
         }
-        jwtService.extractSubject(jwt.get()).ifPresent(e -> {
+        jwtService.extractClaim(jwt.get(), Claims::getSubject).ifPresent(e -> {
             try {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(e);
                 SecurityContextHolder.getContext()

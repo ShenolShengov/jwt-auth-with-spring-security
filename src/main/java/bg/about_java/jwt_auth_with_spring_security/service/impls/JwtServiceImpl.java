@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 public class JwtServiceImpl implements JwtService {
@@ -23,6 +24,8 @@ public class JwtServiceImpl implements JwtService {
     private String secret;
     @Value("${jwt_expiration_time}")
     private Duration expirationTime;
+    @Value("${jwt-aut-with-spring-security-app}")
+    private String issuer;
 
     @Override
     public JwtDTO generateToken(String username) {
@@ -33,6 +36,7 @@ public class JwtServiceImpl implements JwtService {
                 .builder()
                 .signWith(secretKey)
                 .subject(username)
+                .issuer(issuer)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiration))
                 .compact();
@@ -52,16 +56,20 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public boolean isValid(String jwt) {
         try {
-            extractClaims(jwt);
+            return extractClaim(jwt, Claims::getIssuedAt)
+                    .map(e -> e.before(Date.from(Instant.now())))
+                    .orElse(false);
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
-    public Optional<String> extractSubject(String jwt) {
+
+    @Override
+    public <T> Optional<T> extractClaim(String jwt, Function<Claims, T> extractFunction) {
         try {
-            return Optional.of(extractClaims(jwt).getSubject());
+            Claims claims = extractClaims(jwt);
+            return Optional.of(extractFunction.apply(claims));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -71,6 +79,7 @@ public class JwtServiceImpl implements JwtService {
         return Jwts.
                 parser().
                 verifyWith(generateKey(secret))
+                .requireIssuer(issuer)
                 .build()
                 .parseSignedClaims(jwt)
                 .getPayload();
